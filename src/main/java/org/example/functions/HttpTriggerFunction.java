@@ -9,6 +9,7 @@ import com.microsoft.azure.functions.annotation.AuthorizationLevel;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
 
+import java.util.Map;
 import java.util.Optional;
 /**
  * Azure Functions with HTTP Trigger.
@@ -24,9 +25,10 @@ public class HttpTriggerFunction {
             final ExecutionContext context) {
 
         // Item list
-        context.getLogger().info("Request body is: " + request.getBody().orElse(""));
+        context.getLogger().info("Request body is: " + request.getBody().orElse("")+" Request header"+request.getHeaders());
         int num= (int) (Math.random()*100);
         // Check request body
+
         if (!request.getBody().isPresent()) {
             return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
                     .body("Document not found.")
@@ -43,12 +45,14 @@ public class HttpTriggerFunction {
             else
                 ans="Accept";
             final String body = request.getBody().get();
+            final Map<String, String> head=request.getHeaders();
             final String jsonDocument = "{\"score\":\""+num+"\", " +
                     "\"decision\": \"" + ans + "\"}";
             return request.createResponseBuilder(HttpStatus.OK)
                     .header("Content-Type", "application/json")
                     .body(jsonDocument)
                     .build();
+
         }
     }
 }
